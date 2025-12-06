@@ -1,5 +1,8 @@
 name: Daily Repository Activity
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: "05 20 * * *"
