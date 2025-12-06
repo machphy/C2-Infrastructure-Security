@@ -1,0 +1,28 @@
+name: Daily Repository Activity
+
+on:
+  schedule:
+    - cron: "30 18 * * *"   # Daily 00:00 IST (UTC+5:30)
+  workflow_dispatch:
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update activity log
+        run: |
+          echo "Daily activity update: $(date)" >> DAILY_ACTIVITY_LOG.txt
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add DAILY_ACTIVITY_LOG.txt
+          git commit -m "Automated daily activity update" || echo "No changes to commit"
+
+      - name: Push changes
+        run: git push
+
