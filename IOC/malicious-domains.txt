@@ -1,0 +1,4 @@
+# Known / Simulated Malicious Domains (C2 style)
+
+c2-update-server.com
+beacon-control.net

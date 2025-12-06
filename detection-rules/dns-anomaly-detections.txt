@@ -1,0 +1,11 @@
+DNS-Based Indicators of Potential C2 Activity
+
+1. High entropy domain names
+2. Repeated DNS queries at fixed intervals
+3. Multiple NXDOMAIN responses
+4. Recently registered domains
+5. Domains not seen in last 30 days but queried repeatedly
+
+SOC Action:
+- Enrich domain with threat intelligence
+- Block at DNS firewall if confirmed malicious

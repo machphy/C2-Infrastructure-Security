@@ -1,0 +1,30 @@
+title: Suspicious C2 Beaconing Behavior
+id: C2-BEACON-001
+status: experimental
+description: >
+  Detects potential Command and Control (C2) beaconing by identifying
+  periodic outbound connections with low variance in timing to the same
+  destination IP and port.
+author: Rajeev Kumar Sharma
+date: 2025-12-07
+attack_technique:
+  - TA0011: Command and Control
+  - T1071: Application Layer Protocol
+logsource:
+  product: network
+  category: flow
+detection:
+  selection:
+    dst_port:
+      - 443
+      - 8443
+  condition: >
+    repeated_connections_same_dst AND
+    avg_interval_sec <= 30 AND
+    stddev_interval_sec < 2
+level: high
+tags:
+  - c2
+  - beaconing
+  - soc
+  - threat-hunting

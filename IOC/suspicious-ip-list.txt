@@ -1,0 +1,4 @@
+# Suspicious / Potential C2 Infrastructure IPs
+# Source: Lab simulation + Beacon Detection (Stage-4)
+
+52.23.45.67

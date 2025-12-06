@@ -1,0 +1,21 @@
+Rule Name: Potential C2 Beaconing via Periodic Outbound Traffic
+
+Rule Type:
+Event / Flow Correlation
+
+Conditions:
+1. Multiple outbound flows from same source IP
+2. Same destination IP and destination port
+3. Destination port is 443 or 8443
+4. Flow interval consistency observed (low variance)
+5. Destination IP matches internal Suspicious IP list
+
+Response:
+- Create High Severity Offense
+- Add Source IP to watchlist
+- Trigger SOC investigation
+
+MITRE Mapping:
+- TA0011: Command and Control
+- T1071: Application Layer Protocol
+- T1573: Encrypted Channel
