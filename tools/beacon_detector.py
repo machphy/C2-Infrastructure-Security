@@ -36,7 +36,6 @@ def main(csv_file):
         avg_interval = np.mean(intervals)
         stddev = np.std(intervals)
 
-        # Simple beaconing heuristic -- for my cloud ... okok
         if stddev < 2:
             print(f"{src},{dst},{port},{avg_interval:.2f},{stddev:.2f},{len(times)}")
 
@@ -45,5 +44,4 @@ if __name__ == "__main__":
         print("Usage: python3 beacon_detector.py <flows.csv>")
         sys.exit(1)
 
-    main(sys.argv[1])
-
+    main(sys.argv[1]_)
