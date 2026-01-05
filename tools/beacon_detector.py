@@ -37,7 +37,7 @@ def main(csv_file):
         stddev = np.std(intervals)
 
         if stddev < 2:
-            print(f"{src},{dst},{port},{avg_interval:.2f},{stddev:.2f},{len(times)}")
+            print(f"{src},{dst},{port},{avg_interval:.2f},{stdde:.2f},{len(times)}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
