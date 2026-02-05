@@ -33,7 +33,7 @@ def analyze_dns_log(csv_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python3 new.py dns_logs.csv")
+        print("Usage: python3 dns_entropy_detector.py dns_logs.csv")
         sys.exit(1)
 
     analyze_dns_log(sys.argv[1])
