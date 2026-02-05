@@ -1,6 +1,5 @@
 import sys
 import pandas as pd
-from datetime import datetime
 import numpy as np
 
 def main(csv_file):
@@ -15,7 +14,8 @@ def main(csv_file):
         print("CSV must contain columns:", required_cols)
         sys.exit(1)
 
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    df = df.dropna(subset=["timestamp"])
 
     print("=== Potential Beaconing Flows ===")
     print("src_ip,dst_ip,dst_port,avg_interval_sec,stddev_interval_sec,count")
@@ -37,11 +37,11 @@ def main(csv_file):
         stddev = np.std(intervals)
 
         if stddev < 2:
-            print(f"{src},{dst},{port},{avg_interval:.2f},{stdde:.2f},{len(times)}")
+            print(f"{src},{dst},{port},{avg_interval:.2f},{stddev:.2f},{len(times)}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python3 beacon_detector.py <flows.csv>")
         sys.exit(1)
 
-    main(sys.argv[1]_)
+    main(sys.argv[1])
