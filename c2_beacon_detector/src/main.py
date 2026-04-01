@@ -84,5 +84,5 @@ def main():
     print("- This is NOT a verdict, it's just a hunting signal.\n")
 
 
-if __name__ == "__main__":
+if __name__ == "new":
     main()
