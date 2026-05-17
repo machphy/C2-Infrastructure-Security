@@ -11,6 +11,8 @@ def parse_args():
     p.add_argument("--csv", required=True, help="Path to flows.csv")
     p.add_argument("--min-events", type=int, default=6, help="Minimum events per group")
     p.add_argument("--top", type=int, default=20, help="How many results to show")
+    p.add_argument("--out-json", help="Path to save results as JSON")
+    p.add_argument("--out-csv", help="Path to save results as CSV")
     return p.parse_args()
 
 
@@ -38,7 +40,15 @@ def main():
             continue
 
         timestamps = g["ts"].tolist()
-        score, debug = analyze_flow_group(timestamps)
+        
+        bytes_sizes = None
+        # Support common byte column names
+        for b_col in ["bytes_out", "bytes_in", "bytes", "length"]:
+            if b_col in g.columns:
+                bytes_sizes = g[b_col].dropna().tolist()
+                break
+                
+        score, debug = analyze_flow_group(timestamps, bytes_sizes=bytes_sizes)
 
         results.append(
             {
@@ -82,6 +92,14 @@ def main():
     print("\nTip:")
     print("- Score closer to 1.0 means more periodic / beacon-like.")
     print("- This is NOT a verdict, it's just a hunting signal.\n")
+
+    # Exports
+    if args.out_json:
+        out.to_json(args.out_json, orient="records", indent=4)
+        print(f"[+] Saved results to JSON: {args.out_json}")
+    if args.out_csv:
+        out.to_csv(args.out_csv, index=False)
+        print(f"[+] Saved results to CSV: {args.out_csv}")
 
 
 if __name__ == "new":

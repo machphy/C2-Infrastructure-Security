@@ -1,6 +1,6 @@
 import numpy as np
 
-from .features import compute_iat, coefficient_of_variation, interval_entropy, basic_stats
+from .features import compute_iat, coefficient_of_variation, interval_entropy, basic_stats, lag1_autocorrelation
 
 
 def beacon_score_from_iat(iat):
@@ -21,12 +21,15 @@ def beacon_score_from_iat(iat):
 
     cv = coefficient_of_variation(iat)
     ent = interval_entropy(iat)
+    autocorr = lag1_autocorrelation(iat)
 
     # Defensive defaults
     if cv is None:
         cv = 999.0
     if ent is None:
         ent = 999.0
+    if autocorr is None:
+        autocorr = 0.0
 
     # CV scoring:
     # CV ~ 0.0 => very periodic (suspicious)
@@ -51,20 +54,30 @@ def beacon_score_from_iat(iat):
     # I prefer this to a single hard threshold, because it stays explainable.
     score = (0.65 * cv_score) + (0.35 * ent_score)
 
+    # Autocorr scoring:
+    # High autocorr (human bursty traffic) reduces the score.
+    # We penalize the score if autocorr > 0.4
+    if autocorr > 0.4:
+        score -= (autocorr * 0.3)
+    
+    score = max(0.0, float(score))
+
     debug = {
         "cv": float(cv),
         "entropy": float(ent),
+        "autocorr": float(autocorr),
         "cv_score": float(cv_score),
         "entropy_score": float(ent_score),
     }
 
-    return float(score), debug
+    return score, debug
 
 
-def analyze_flow_group(timestamps):
+def analyze_flow_group(timestamps, bytes_sizes=None):
     """
     Given timestamps for a single (src_ip, dst_ip, dst_port),
     compute IAT features and return a risk score.
+    Optionally process payload sizes if provided.
     """
     iat = compute_iat(timestamps)
 
@@ -75,5 +88,17 @@ def analyze_flow_group(timestamps):
     debug.update(stats)
     debug["samples"] = int(len(timestamps))
     debug["iat_samples"] = int(len(iat))
+    
+    # Optional bytes analysis
+    if bytes_sizes is not None and len(bytes_sizes) > 0:
+        b_cv = coefficient_of_variation(bytes_sizes)
+        if b_cv is not None:
+            debug["bytes_cv"] = float(b_cv)
+            # If payload sizes are extremely uniform (low CV), bump score
+            if b_cv < 0.1:
+                score += 0.2
+            elif b_cv > 1.0:
+                score -= 0.1
+        score = min(1.0, max(0.0, score))
 
     return score, debug
