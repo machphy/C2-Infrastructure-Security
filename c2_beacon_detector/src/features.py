@@ -91,3 +91,29 @@ def basic_stats(arr):
         "std": float(np.std(arr)),
         "median": float(np.median(arr)),
     }
+
+
+def lag1_autocorrelation(arr):
+    """
+    Calculates the Pearson correlation coefficient between IAT[i] and IAT[i+1].
+    Human traffic is often bursty (high autocorrelation).
+    Automated jittered beaconing is usually independent (low autocorrelation around ~0).
+    """
+    if arr is None or len(arr) < 4:
+        return None
+    
+    # We need variance to compute correlation
+    if np.std(arr) == 0:
+        return None
+
+    x = arr[:-1]
+    y = arr[1:]
+    
+    # Calculate Pearson correlation manually or with numpy
+    r = np.corrcoef(x, y)[0, 1]
+    
+    # Sometimes it can be NaN if there's no variance in the slice
+    if np.isnan(r):
+        return 0.0
+        
+    return float(r)
