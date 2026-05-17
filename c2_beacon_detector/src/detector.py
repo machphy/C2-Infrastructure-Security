@@ -12,7 +12,7 @@ def beacon_score_from_iat(iat):
     - low entropy (more repetitive)
     - enough samples (so we don't overreact)
 
-    Score is between 0 and 1.
+
     """
 
     if iat is None or len(iat) < 6:
